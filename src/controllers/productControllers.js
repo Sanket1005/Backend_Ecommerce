@@ -4,18 +4,36 @@ export const createProduct = async (req, res) => {
     try{
         const {
             productName,
-            productImage,
             price,
             description,
-            category
+            category,
+            rating,
+            productStock,
         } = req.body;
+        console.log(req.body)
+        const productImage = req.file.path;
 
-        const product = new product ({
+        if (
+            !productImage ||
+            !productName ||
+            !description ||
+            !price ||
+            !rating ||
+            !productStock
+        ){
+            return res.status(400).json({message: "All field are required" });
+        }
+
+
+
+        const product = new Product ({
             productName,
             productImage,
             price,
             description,
-            category
+            category,
+            rating,
+            productStock,
         })
 
         await product.save();

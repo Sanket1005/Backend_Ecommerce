@@ -1,6 +1,6 @@
 import User from "../Models/userModels.js";
 import bcrypt from"bcryptjs";
-import { genSalt } from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 export const signUp = async (req, res) => {
     try{
@@ -22,10 +22,10 @@ export const signUp = async (req, res) => {
             email,
             number,
             password: hashedPassword,
-
-
         });
         await newUser.save();
+
+       
 
         res.status(201).
         json({ nessage: "user created succesfully", user: newUser});
@@ -42,17 +42,25 @@ export const login = async (req, res) => {
         const user = await  User.findOne({email});
 
         if(!user) {
-            return res.status(400) .jsaon({ messsge:"User not Found"});
+            return res.status(400) .json({ messsge:"User not Found"});
         }
 const isMatch = await bcrypt.compare(password, user.password);
 if (!isMatch) {
     return res.status(400).json({ message: "invalied credentials"});
 }
+jwt.sign({id: user._id}, process.env.SCCRET_KEY, {expiresIn: "1h"}, (err, token) =>{
+    if(err){
+        console.error(err);
+        res.status(500).json({message: "Internal server error"});
+        return;
+    }
+    return res.status(200).json({message: "Login Successful", token: token})
+})
 
-res.status(200).json({
-    message: "Login successful",
+// res.status(200).json({
+//     message: "Login successful",
 
-});
+// });
 
 } catch (error) {
 console.error("error logging in:", error);

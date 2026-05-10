@@ -24,9 +24,14 @@ const productSchema = new mongoose.Schema({
     },
     category: {
         type: String,
-    }
+        required: true,
+    },
+    productStock: {
+        type : Number,
+        required: true,
+    },
 })
 
-const Product = mongoose.model("product", productSchema);
+const Product = mongoose.model("Product", productSchema);
 
 export default Product; 
